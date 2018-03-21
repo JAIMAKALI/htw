@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>image uploader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style media="screen">
+.scrollit { overflow-y:scroll; height: 600px}
+/*  this is for pop up window*/
+
+.sidenav {
+  background-color: #f1f1f1;
+  height: 100%;
+}
+/* Set a style for all buttons */
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+
+
+
+
+.container {
+    padding: 16px;
+}
+
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+</style>
+  </head>
+  <body>
+    {{>navbar}}
+  {{# if upload}}
+  {{upload}}
+  {{/if}}
+  <div class="container-fluid">
+    <div class="row content">
+          <div class="col-sm-9 ">
+  <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Upload</button>
+</div>
+</div>
+</div>
+  <div id="id01" class="modal">
+    <form class="modal-content animate" action="/image" method='post' enctype="multipart/form-data">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      </div>
+      <div class="container">
+        Name<input type="text" name='email' required/><br />
+        Photo:<input type='file' name='photo' required/><br />
+        <p><button onclick="geoFindMe()"> add location</button></p>
+        lng<input type='text' name='lng' id="lng" value=''/>
+        lat:<input type='text' name="lat" value='' id='lat'/><br />
+
+        description<textarea type='text' name='description' required ></textarea>
+        <input type="submit"  value="submit">
+      </div>
+    </form>
+  </div>
+
+  <script>
+  // Get the modal
+  var modal = document.getElementById('id01');
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+  </script>
+
+
+
+
+  <!-- <form  action="/image" method="post" enctype="multipart/form-data">
+
+  </form>
+  <h3>Demo: Take a Selfie With JavaScript</h3> -->
+  <div class="container-fluid">
+    <div class="row content">
+      <div class="col-sm-3 sidenav fixed">
+        <h4>John's Blog</h4>
+        <ul class="nav nav-pills nav-stacked">
+          <li class="active"><a href="/image">Home</a></li>
+          <li><a href="/image">Friends</a></li>
+          <li><a href="#">Family</a></li>
+          <li><a href="#">Photos</a></li>
+        </ul><br>
+        <!-- <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search Blog..">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </span>
+        </div> -->
+      </div>
+
+
+      <div class="col-sm-9 scrollit">
+        {{# if content}}
+           {{#each content}}
+            <a href='/profileInfo/{{this._id}}'>
+           <div class="col-sm-2 text-center">
+             <img src="/static/images/{{this.imageUrl}}" class="img-circle" height="65" width="65" alt="Avatar">
+             <h4><small>{{this.name}}</small></h4>
+           </div>
+</a>
+
+        {{#each this.blogPost}}
+          <div class="row">
+
+        <hr>
+        <h2>{{this.title}}</h2>
+        <h5><span class="glyphicon glyphicon-time"></span> PostDate:{{this.postDate}}</h5>
+        <h5><span class="label label-danger">Food</span> <span class="label label-primary">Ipsum</span></h5><br>
+        <img src='/static/images/{{this.imageUrl}}' width='250' heigth='250' align="center"/ >
+      <p><b> {{this.content}}</b></p>
+        <br><br>
+        <h4>Leave a Comment:</h4>
+        <form  action='/comment/{{this._id}}' method='post' >
+          <div class="form-group">
+            <textarea class="form-control" rows="3" name='comment'></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+        <br><br>
+
+        <p><span class="badge">2</span> Comments:</p><br>
+        {{#if this.comments}}
+        {{#each this.comments}}
+        <div class="row">
+              <!-- <div class="col-sm-2 text-center">
+                <img src="bandmember.jpg" class="img-circle" height="65" width="65" alt="Avatar">
+              </div> -->
+              <div class="col-sm-10">
+                <h4>Anja <small>{{this.time}}</small></h4>
+                <p>{{this.comment}}</p>
+                <br>
+              </div>
+            </div>
+            {{/each}}
+            {{/if}}
+
+      </div>
+      {{/each}}
+      {{/each}}
+      {{/if}}
+    </div>
+
+    </div>
+  </div>
+
+
+  </body>
+
+  <script type="text/javascript">
+
+  function geoFindMe() {
+    // var output = document.getElementById("out");
+
+    if (!navigator.geolocation){
+      output.innerHTML = "<p>Geolocation is not supported by your browser</p>";
+      return;
+    }
+
+    function success(position) {
+      var latitude  = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      console.log(latitude,longitude);
+     document.getElementById('lat').value=latitude;
+      document.getElementById('lng').value=longitude;
+    //  output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>';
+
+      // var img = new Image();
+      // img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude + "&zoom=13&size=300x300&sensor=false";
+      //
+      // output.appendChild(img);
+    }
+
+    function error() {
+      // output.innerHTML = "Unable to retrieve your location";
+      alert('Unable to retrieve your location');
+    }
+
+    // output.innerHTML = "<p>Locating…</p>";
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+
+  </script>
+</html>
